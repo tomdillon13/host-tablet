@@ -2,11 +2,12 @@
 <img src="Images/logo.png">
 
 <br /><br />
-<h1>Leave us a Review!</h1>
-<img src="Images/trip-advisor.png">
+<h1 id="reviewText">Leave us a Review!</h1>
+<img id="reviewImage" src="Images/trip-advisor.png">
 <br /><br />
 <img src="Images/Tripadvisor-Logo.png" width="384" height="240">
 
+<p><a href="#" onclick="changeReview('Tamworth'); return false;">Tamworth</a> | <a href="#" onclick="changeReview('MK'); return false;">Milton Keynes</a> | <a href="#" onclick="changeReview('Sandown'); return false;">Sandown Park</a></p>
 
 </center>
 <meta name="viewport"
@@ -14,3 +15,23 @@
 
 
 <link rel="stylesheet" href="style.css"> 
+<script>
+      function changeReview(venue){
+            if(venue=="Tamworth"){
+                  document.getElementById('reviewText').innerHTML = 'Leave a review of Daytona Tamworth!';
+                  document.getElementById('reviewImage').src = 'Images/trip-advisor-tam.png';
+                  return;
+            }
+            else if (venue=="MK"){
+                  document.getElementById('reviewText').innerHTML = 'Leave a review of Daytona Milton Keynes!';
+                  document.getElementById('reviewImage').src = 'Images/trip-advisor-mk.png';
+                  return;
+            }
+            else if (venue=="Sandown"){
+                  document.getElementById('reviewText').innerHTML = 'Leave a review of Daytona Sandown Park!';
+                  document.getElementById('reviewImage').src = 'Images/trip-advisor-sp.png';
+                  return;
+            }
+      }
+
+</script>
