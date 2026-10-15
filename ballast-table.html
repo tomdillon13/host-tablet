@@ -1,84 +1,51 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <center><img src="Images/logo.png"></center>
-  <link rel="stylesheet" href="ballast-table.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ballast Log</title>
+<style>
+body{font-family:Arial,sans-serif;text-align:center;margin:35px 12px;background:#333;color:#fff}main{max-width:1000px;margin:auto}h2{margin:25px 0}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;background:#404040}th,td{border:1px solid #777;padding:12px 8px;text-align:left}th{background:#b90000}input{box-sizing:border-box;width:100%;min-width:85px;padding:9px;font-size:16px;border:0;border-radius:3px}button{padding:9px 12px;font-size:16px;font-weight:bold;cursor:pointer;border:0;margin:3px;color:white;background:#d00}button:hover{background:#a00}#message{min-height:25px;font-size:17px}td:last-child{white-space:nowrap}@media(max-width:500px){th,td{font-size:13px;padding:7px 4px}button{font-size:13px;padding:8px}}
+</style>
 </head>
-<body>
-  <main>
-    <p id="message" role="status" aria-live="polite"></p>
-    <h2>Ballast Log</h2>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Name</th><th>Ballast (kg)</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody id="log"></tbody>
-        <tfoot><tr class="new-row">
-          <td><input id="person" class="table-input" type="text" placeholder="Name" aria-label="New person's name"></td>
-          <td><input id="amount" class="table-input" type="number" min="0" step="0.1" placeholder="kg" aria-label="Ballast amount in kg"></td>
-          <td>New</td>
-          <td><button id="signOut" class="table-button" type="button">Sign Out</button></td>
-        </tr></tfoot>
-      </table>
-    </div>
-  </main>
-  <script>
-    const key = 'ballast-records-v1';
-    const nameInput = document.getElementById('person');
-    const amountInput = document.getElementById('amount');
-    const message = document.getElementById('message');
-    const log = document.getElementById('log');
-    let records;
-    let editing = -1;
-    try { records = JSON.parse(localStorage.getItem(key)) || []; if (!Array.isArray(records)) records = []; }
-    catch { records = []; }
-    // Keep existing records from the earlier version, without displaying timestamps.
-    function signedIn(record) { return Boolean(record.in) || record.status === 'in'; }
-    function save() { localStorage.setItem(key, JSON.stringify(records)); render(); }
-    function show(text) { message.textContent = text; }
-    function cell(row, content) { const td = document.createElement('td'); if (typeof content === 'string') td.textContent = content; row.appendChild(td); return td; }
-    function action(label, handler, className = '') {
-      const button = document.createElement('button'); button.type = 'button'; button.textContent = label;
-      button.className = 'table-button ' + className; button.addEventListener('click', handler); return button;
-    }
-    function render() {
-      log.replaceChildren();
-      records.forEach((record, index) => {
-        const row = document.createElement('tr');
-        const nameCell = cell(row, editing === index ? '' : record.name);
-        const amountCell = cell(row, editing === index ? '' : String(record.amount));
-        cell(row, signedIn(record) ? 'Signed In' : 'Signed Out');
-        const controls = cell(row, ''); controls.className = 'row-actions';
-        if (editing === index) {
-          const editName = document.createElement('input'); editName.type = 'text'; editName.value = record.name; editName.className = 'table-input'; editName.setAttribute('aria-label', 'Edit name');
-          const editAmount = document.createElement('input'); editAmount.type = 'number'; editAmount.min = '0'; editAmount.step = '0.1'; editAmount.value = record.amount; editAmount.className = 'table-input'; editAmount.setAttribute('aria-label', 'Edit ballast amount');
-          nameCell.appendChild(editName); amountCell.appendChild(editAmount);
-          controls.appendChild(action('Save', () => {
-            const name = editName.value.trim(); const amount = Number(editAmount.value);
-            if (!name || !editAmount.value.trim() || !Number.isFinite(amount) || amount <= 0) return show('Enter a name and a ballast amount greater than zero.');
-            if (!signedIn(record) && records.some((r, i) => i !== index && !signedIn(r) && r.name.toLowerCase() === name.toLowerCase())) return show('That person is already signed out.');
-            record.name = name; record.amount = amount; editing = -1; save(); show('Record updated.');
-          }));
-          controls.appendChild(action('Cancel', () => { editing = -1; render(); }));
-        } else {
-          if (!signedIn(record)) controls.appendChild(action('Sign In', () => {
-            record.in = true; record.status = 'in'; save(); show(record.name + ' signed in successfully.');
-          }));
-          controls.appendChild(action('Edit', () => { editing = index; show(''); render(); }));
-        }
-        log.prepend(row);
-      });
-      if (!records.length) { const row = document.createElement('tr'); const td = cell(row, 'No records yet'); td.colSpan = 4; log.appendChild(row); }
-    }
-    document.getElementById('signOut').addEventListener('click', () => {
-      const name = nameInput.value.trim(); const amount = Number(amountInput.value);
-      if (!name || !amountInput.value.trim() || !Number.isFinite(amount) || amount <= 0) return show('Enter a name and a ballast amount greater than zero.');
-      if (records.some(r => r.name.toLowerCase() === name.toLowerCase() && !signedIn(r))) return show('This person is already signed out. Sign them in using their table row first.');
-      records.push({ name, amount, status: 'out' });
-      editing = -1; save(); show(name + ' signed out with ' + amount + ' kg.'); nameInput.value = ''; amountInput.value = '';
-    });
-    render();
-  </script>
-</body>
-</html>
+<body><main><p id="message" role="status" aria-live="polite"></p><h2>Ballast Log</h2><div class="table-wrap"><table><thead><tr><th>Name</th><th>Ballast (kg)</th><th>Status</th><th>Actions</th></tr></thead><tbody id="log"></tbody><tfoot><tr><td><input id="person" placeholder="Name" aria-label="Name"></td><td><input id="amount" type="number" min="0" step="0.1" placeholder="kg" aria-label="Ballast amount"></td><td>New</td><td><button id="signOut" type="button">Sign Out</button></td></tr></tfoot></table></div></main>
+<script>
+'use strict';
+(() => {
+const KEY='ballast-records-v1';
+const log=document.getElementById('log'), msg=document.getElementById('message'), person=document.getElementById('person'), amount=document.getElementById('amount');
+let records=[];
+try {const stored=JSON.parse(localStorage.getItem(KEY)||'[]');if(Array.isArray(stored))records=stored.filter(r=>r&&typeof r==='object');}catch(e){msg.textContent='Could not read saved records: '+e.message;}
+let editing=-1;
+const isIn=r=>r.in===true||r.status==='in';
+const notify=t=>{msg.textContent=t;};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(records));}catch(e){notify('Records updated on screen, but could not be saved: '+e.message);}render();}
+function td(row,value){const c=document.createElement('td');c.textContent=String(value??'');row.appendChild(c);return c;}
+function button(parent,label,callback){const b=document.createElement('button');b.type='button';b.textContent=label;b.addEventListener('click',callback);parent.appendChild(b);}
+function render(){
+ const fragment=document.createDocumentFragment();
+ for(let index=records.length-1;index>=0;index--){
+  const r=records[index], row=document.createElement('tr');
+  const n=td(row,r.name), a=td(row,r.amount);td(row,isIn(r)?'Signed In':'Signed Out');const actions=td(row,'');
+  if(editing===index){
+   n.textContent='';a.textContent='';const ni=document.createElement('input');ni.value=String(r.name??'');ni.setAttribute('aria-label','Edit name');n.appendChild(ni);
+   const ai=document.createElement('input');ai.type='number';ai.min='0';ai.step='0.1';ai.value=String(r.amount??'');ai.setAttribute('aria-label','Edit ballast');a.appendChild(ai);
+   button(actions,'Save',()=>{const name=ni.value.trim(), weight=Number(ai.value);if(!name||!ai.value.trim()||!Number.isFinite(weight)||weight<=0)return notify('Enter a name and ballast greater than zero.');if(!isIn(r)&&records.some((x,i)=>i!==index&&!isIn(x)&&String(x.name??'').trim().toLowerCase()===name.toLowerCase()))return notify('That person is already signed out.');r.name=name;r.amount=weight;editing=-1;save();notify('Record updated.');});
+   button(actions,'Cancel',()=>{editing=-1;render();});
+  }else{
+   if(!isIn(r))button(actions,'Sign In',()=>{r.in=true;r.status='in';save();notify(String(r.name)+' signed in successfully.');});
+   button(actions,'Edit',()=>{editing=index;notify('');render();});
+  }
+  fragment.appendChild(row);
+ }
+ if(!records.length){const row=document.createElement('tr'),c=td(row,'No records yet');c.colSpan=4;fragment.appendChild(row);}
+ log.replaceChildren(fragment);
+}
+document.getElementById('signOut').addEventListener('click',()=>{
+ const name=person.value.trim(),weight=Number(amount.value);
+ if(!name||!amount.value.trim()||!Number.isFinite(weight)||weight<=0)return notify('Enter a name and a ballast amount greater than zero.');
+ if(records.some(r=>String(r.name??'').trim().toLowerCase()===name.toLowerCase()&&!isIn(r)))return notify('This person is already signed out. Sign them in using their table row first.');
+ records.push({name,amount:weight,status:'out'});editing=-1;save();notify(name+' signed out with '+weight+' kg.');person.value='';amount.value='';
+});
+render();
+})();
+</script></body></html>
