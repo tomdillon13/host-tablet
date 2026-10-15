@@ -1,0 +1,23 @@
+body { font-family: Arial, sans-serif; text-align: center; margin: 50px 12px 20px; background-color: #333333; overflow-x: hidden; color: white; }
+main { max-width: 1000px; margin: auto; }
+label { display: block; font-size: 22px; font-weight: bold; margin: 20px 0 8px; }
+input { box-sizing: border-box; width: min(90%, 430px); padding: 13px; font-size: 22px; border: 0; border-radius: 3px; }
+.actions { margin: 20px auto; display: flex; flex-wrap: wrap; justify-content: center; }
+button { padding: 15px 20px; min-width: 180px; font-size: 25px; font-weight: bold; cursor: pointer; border: none; margin: 5px; color: white; background-color: red; }
+button:hover, button:focus-visible { background-color: #c90000; }
+#message { min-height: 24px; font-size: 18px; }
+h2 { margin-top: 35px; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; background: #404040; }
+th, td { border: 1px solid #777; padding: 12px 8px; text-align: left; }
+th { background: #b90000; }
+.note { color: #ccc; font-size: 14px; }
+@media (max-width: 500px) { body { margin-top: 25px; } button { width: 90%; } th, td { font-size: 13px; padding: 8px 5px; } }
+/* Row-level editing and sign-in controls */
+.row-actions { white-space: nowrap; }
+.table-button { min-width: 0; width: auto; height: auto; padding: 9px 12px; font-size: 16px; margin: 3px; }
+.table-input { width: 100%; min-width: 100px; max-width: 200px; padding: 8px; font-size: 16px; }
+@media (max-width: 500px) { .table-button { width: auto; font-size: 14px; padding: 8px; } .table-input { min-width: 85px; } }
+
+tfoot td { background: #494949; }
+tfoot .table-input { width: 100%; }
